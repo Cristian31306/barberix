@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-secondary: #f43f5e;
+  --color-dark-bg: #0f172a;
+  --color-dark-surface: #1e293b;
+  --color-dark-border: #334155;
+  --color-text-main: #f8fafc;
+  --color-text-muted: #94a3b8;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-text-main font-sans antialiased;
+  }
+  input, select, textarea {
+    @apply text-slate-900;
+  }
+}
+
+/* Glassmorphism utilities */
+@layer utilities {
+  .glass {
+    @apply bg-dark-surface/70 backdrop-blur-md border border-dark-border shadow-xl;
+  }
+  .glass-panel {
+    @apply bg-dark-surface/50 backdrop-blur-sm border border-dark-border/50 rounded-2xl;
+  }
+  .input-field {
+    @apply bg-dark-bg border border-dark-border rounded-lg px-4 py-2 text-text-main focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
+  }
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-lg transition-all shadow-lg shadow-primary/20 active:scale-95;
+  }
+  .btn-secondary {
+    @apply bg-dark-surface hover:bg-dark-border text-text-main border border-dark-border font-medium py-2 px-4 rounded-lg transition-all active:scale-95;
+  }
+  .btn-danger {
+    @apply bg-secondary hover:bg-rose-600 text-white font-medium py-2 px-4 rounded-lg transition-all shadow-lg shadow-secondary/20 active:scale-95;
+  }
+}
