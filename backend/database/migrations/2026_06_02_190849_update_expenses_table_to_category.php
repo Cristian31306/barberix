@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('expenses', function (Blueprint $table) {
-            $table->renameColumn('type', 'category');
-            $table->softDeletes();
+            if (Schema::hasColumn('expenses', 'type')) {
+                $table->renameColumn('type', 'category');
+            }
+            if (!Schema::hasColumn('expenses', 'deleted_at')) {
+                $table->softDeletes();
+            }
         });
     }
 
