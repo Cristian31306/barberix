@@ -24,12 +24,34 @@ export default function BookingPortal() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [clientData, setClientData] = useState({ name: '', phone: '', email: '' });
   
+  const [bookedSlots, setBookedSlots] = useState([]);
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   useEffect(() => {
     fetchTenantInfo();
   }, [tenantId]);
+
+  useEffect(() => {
+    if (step === 3 && selectedBarber) {
+      fetchBookedSlots();
+    }
+  }, [step, selectedBarber, selectedDate]);
+
+  const fetchBookedSlots = async () => {
+    try {
+      const baseUrl = import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api';
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const response = await fetch(`${baseUrl}/public/booked-slots/${tenantId}/${selectedBarber.id}?date=${dateStr}`);
+      if (response.ok) {
+        const data = await response.json();
+        setBookedSlots(data.booked_slots || []);
+      }
+    } catch (err) {
+      console.error('Error fetching booked slots', err);
+    }
+  };
 
   const fetchTenantInfo = async () => {
     try {
@@ -141,12 +163,14 @@ export default function BookingPortal() {
       
       const slot1Minutes = h * 60;
       if (slot1Minutes >= minAllowedMinutes) {
-        slots.push(`${h.toString().padStart(2, '0')}:00`);
+        const t1 = `${h.toString().padStart(2, '0')}:00`;
+        if (!bookedSlots.includes(t1)) slots.push(t1);
       }
       
       const slot2Minutes = h * 60 + 30;
       if (slot2Minutes >= minAllowedMinutes) {
-        slots.push(`${h.toString().padStart(2, '0')}:30`);
+        const t2 = `${h.toString().padStart(2, '0')}:30`;
+        if (!bookedSlots.includes(t2)) slots.push(t2);
       }
     }
     return slots;

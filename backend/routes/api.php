@@ -19,8 +19,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Public Booking Routes
 Route::prefix('public')->group(function () {
-    Route::get('/booking-info/{tenant_id}', [\App\Http\Controllers\PublicBookingController::class, 'info']);
-    Route::post('/book/{tenant_id}', [\App\Http\Controllers\PublicBookingController::class, 'book']);
+    Route::get('/info/{tenant_id}', [App\Http\Controllers\PublicBookingController::class, 'info']);
+    Route::get('/booked-slots/{tenant_id}/{barber_id}', [App\Http\Controllers\PublicBookingController::class, 'bookedSlots']);
+    Route::post('/book/{tenant_id}', [App\Http\Controllers\PublicBookingController::class, 'book']);
 });
 
 Route::middleware(['auth:sanctum', 'superadmin'])->prefix('superadmin')->group(function () {
@@ -58,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cash-register/history', [App\Http\Controllers\CashRegisterController::class, 'history']);
 
     Route::get('/vapid-public-key', function () {
-        return response()->json(['key' => env('VAPID_PUBLIC_KEY')]);
+        return response()->json(['key' => config('services.vapid.public_key')]);
     });
 
     // POS
