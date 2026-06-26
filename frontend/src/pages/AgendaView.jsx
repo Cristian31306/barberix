@@ -306,6 +306,22 @@ export default function AgendaView() {
                           </div>
                         ))}
                         
+                        {/* Break Time Block */}
+                        {config?.has_break && (
+                          <div 
+                            className="absolute left-0 right-0 bg-slate-100/80 border-y border-slate-300 z-0 flex items-center justify-center text-slate-400 font-medium overflow-hidden"
+                            style={{ 
+                              top: `${(Math.max(config.break_start, startHour) - startHour) * 120}px`, 
+                              height: `${Math.max(0, (Math.min(config.break_end, endHour) - Math.max(config.break_start, startHour))) * 120}px` 
+                            }}
+                          >
+                            <div className="flex flex-col items-center gap-1 opacity-70">
+                              <span className="text-xl">☕</span>
+                              <span className="text-xs uppercase tracking-wider">Descanso</span>
+                            </div>
+                          </div>
+                        )}
+                        
                         {/* Appointments */}
                         {appointments.filter(a => a.barber_id === barber.id).map(apt => {
                           const date = new Date(apt.date);
@@ -333,7 +349,7 @@ export default function AgendaView() {
                             <div 
                               key={apt.id}
                               onClick={() => setDetailsApt(apt)}
-                              className={`absolute left-1 right-1 rounded-lg border shadow-sm p-2 overflow-hidden cursor-pointer transition-colors z-0 flex flex-col ${bgClass}`}
+                              className={`absolute left-1 right-1 rounded-lg border shadow-sm p-2 overflow-hidden cursor-pointer transition-colors z-10 flex flex-col ${bgClass}`}
                               style={{ top: `${top}px`, height: `${height}px`, minHeight: '30px' }}
                             >
                               <div className="flex justify-between items-start mb-0.5 gap-1">

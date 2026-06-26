@@ -126,8 +126,14 @@ export default function BookingPortal() {
     const slots = [];
     const startHour = config?.startHour || 9;
     const endHour = config?.endHour || 19;
+    const hasBreak = config?.has_break || false;
+    const breakStart = config?.break_start || 13;
+    const breakEnd = config?.break_end || 14;
     
     for (let h = startHour; h < endHour; h++) {
+      if (hasBreak && h >= breakStart && h < breakEnd) {
+        continue;
+      }
       slots.push(`${h.toString().padStart(2, '0')}:00`);
       slots.push(`${h.toString().padStart(2, '0')}:30`);
     }

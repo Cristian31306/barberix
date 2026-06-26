@@ -148,6 +148,59 @@ export default function ConfigPanel({ onConfigUpdate }) {
                 </div>
               </div>
             </div>
+            
+            <div className="pt-4 border-t border-slate-100">
+              <label className="flex items-center gap-3 cursor-pointer mb-4">
+                <input 
+                  type="checkbox" 
+                  checked={config?.has_break || false}
+                  onChange={e => setConfig({...config, has_break: e.target.checked})}
+                  className="w-5 h-5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                />
+                <div>
+                  <p className="font-medium text-slate-900">Añadir Hora de Descanso / Almuerzo</p>
+                  <p className="text-sm text-slate-500">Bloqueará este horario para que los clientes no puedan agendar citas.</p>
+                </div>
+              </label>
+
+              {config?.has_break && (
+                <div className="flex gap-4 pl-8">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Inicio del Descanso (0-23)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number" 
+                        min={config?.startHour || 0}
+                        max={config?.endHour || 23}
+                        value={config?.break_start ?? 13}
+                        onChange={e => setConfig({...config, break_start: parseInt(e.target.value) || 0})}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
+                      <span className="text-sm font-medium text-slate-500">:00</span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Fin del Descanso (0-23)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number" 
+                        min={(config?.break_start || 0) + 1}
+                        max={config?.endHour || 23}
+                        value={config?.break_end ?? 14}
+                        onChange={e => setConfig({...config, break_end: parseInt(e.target.value) || 0})}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      />
+                      <span className="text-sm font-medium text-slate-500">:00</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <p className="text-xs text-slate-500">
               Esto definirá el tamaño y las horas visibles en la Agenda Diaria.
             </p>

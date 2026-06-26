@@ -13,6 +13,9 @@ class SystemConfig extends Model
     protected $fillable = [
         'startHour',
         'endHour',
+        'has_break',
+        'break_start',
+        'break_end',
         'enableLoyalty',
         'enableInventory',
         'enableCashRegister',
@@ -25,8 +28,11 @@ class SystemConfig extends Model
         'enableLoyalty' => 'boolean',
         'enableInventory' => 'boolean',
         'enableCashRegister' => 'boolean',
+        'has_break' => 'boolean',
         'startHour' => 'integer',
         'endHour' => 'integer',
+        'break_start' => 'integer',
+        'break_end' => 'integer',
         'points_for_reward' => 'integer',
         'loyalty_rewards' => 'array'
     ];

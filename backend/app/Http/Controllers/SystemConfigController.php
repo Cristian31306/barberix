@@ -16,6 +16,9 @@ class SystemConfigController extends Controller
             return response()->json([
                 'startHour' => 8,
                 'endHour' => 20,
+                'has_break' => false,
+                'break_start' => 13,
+                'break_end' => 14,
                 'enableLoyalty' => false,
                 'enableInventory' => false,
                 'enableCashRegister' => false,
@@ -30,6 +33,9 @@ class SystemConfigController extends Controller
             [
                 'startHour' => 8,
                 'endHour' => 20,
+                'has_break' => false,
+                'break_start' => 13,
+                'break_end' => 14,
                 'enableLoyalty' => false,
                 'enableInventory' => false,
                 'enableCashRegister' => false,
@@ -52,6 +58,9 @@ class SystemConfigController extends Controller
         $validated = $request->validate([
             'startHour' => 'sometimes|integer|min:0|max:23',
             'endHour' => 'sometimes|integer|min:0|max:23|gt:startHour',
+            'has_break' => 'boolean',
+            'break_start' => 'sometimes|integer|min:0|max:23',
+            'break_end' => 'sometimes|integer|min:0|max:23|gt:break_start',
             'enableLoyalty' => 'boolean',
             'enableInventory' => 'boolean',
             'enableCashRegister' => 'boolean',
