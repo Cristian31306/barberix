@@ -19,7 +19,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Public Booking Routes
 Route::prefix('public')->group(function () {
-    Route::get('/info/{tenant_id}', [App\Http\Controllers\PublicBookingController::class, 'info']);
+    Route::get('/booking-info/{tenant_id}', [App\Http\Controllers\PublicBookingController::class, 'info']);
     Route::get('/booked-slots/{tenant_id}/{barber_id}', [App\Http\Controllers\PublicBookingController::class, 'bookedSlots']);
     Route::post('/book/{tenant_id}', [App\Http\Controllers\PublicBookingController::class, 'book']);
 });

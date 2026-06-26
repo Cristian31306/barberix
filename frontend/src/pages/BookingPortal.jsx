@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Scissors, Clock, UserCircle, CalendarDays, CheckCircle2, ChevronRight, Loader2, DollarSign } from 'lucide-react';
+import { Scissors, Clock, UserCircle, CalendarDays, CheckCircle2, ChevronRight, Loader2, DollarSign, AlertTriangle } from 'lucide-react';
 import { format, addDays, startOfToday, setHours, setMinutes } from 'date-fns';
 import { es } from 'date-fns/locale';
 
