@@ -130,12 +130,24 @@ export default function BookingPortal() {
     const breakStart = config?.break_start || 13;
     const breakEnd = config?.break_end || 14;
     
+    const now = new Date();
+    const isToday = format(selectedDate, 'yyyy-MM-dd') === format(now, 'yyyy-MM-dd');
+    const minAllowedMinutes = isToday ? (now.getHours() * 60 + now.getMinutes() + 60) : 0;
+    
     for (let h = startHour; h < endHour; h++) {
       if (hasBreak && h >= breakStart && h < breakEnd) {
         continue;
       }
-      slots.push(`${h.toString().padStart(2, '0')}:00`);
-      slots.push(`${h.toString().padStart(2, '0')}:30`);
+      
+      const slot1Minutes = h * 60;
+      if (slot1Minutes >= minAllowedMinutes) {
+        slots.push(`${h.toString().padStart(2, '0')}:00`);
+      }
+      
+      const slot2Minutes = h * 60 + 30;
+      if (slot2Minutes >= minAllowedMinutes) {
+        slots.push(`${h.toString().padStart(2, '0')}:30`);
+      }
     }
     return slots;
   };
