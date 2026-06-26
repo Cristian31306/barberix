@@ -104,9 +104,55 @@ class PublicBookingController extends Controller
             return $appointment;
         });
 
+        // Load relations for notification
+        $appointment->load(['client', 'barber', 'services']);
+
+        // Send Push Notifications
+        $subscriptions = \App\Models\PushSubscription::where('tenant_id', $tenant_id)->get();
+        if ($subscriptions->isNotEmpty() && env('VAPID_PUBLIC_KEY') && env('VAPID_PRIVATE_KEY')) {
+            $auth = [
+                'VAPID' => [
+                    'subject' => 'mailto:contacto@barberix.com', // can be a URL as well
+                    'publicKey' => env('VAPID_PUBLIC_KEY'),
+                    'privateKey' => env('VAPID_PRIVATE_KEY'),
+                ],
+            ];
+
+            $webPush = new \Minishlink\WebPush\WebPush($auth);
+
+            $payload = json_encode([
+                'title' => '¡Nueva Cita Agendada!',
+                'body' => "{$appointment->client->name} ha agendado con {$appointment->barber->name} para el " . date('d/m/Y H:i', strtotime($appointment->date)),
+                'url' => '/dashboard'
+            ]);
+
+            foreach ($subscriptions as $sub) {
+                $subscription = \Minishlink\WebPush\Subscription::create([
+                    'endpoint' => $sub->endpoint,
+                    'publicKey' => $sub->public_key,
+                    'authToken' => $sub->auth_token,
+                    'contentEncoding' => $sub->content_encoding,
+                ]);
+
+                $webPush->queueNotification($subscription, $payload);
+            }
+
+            // Flush (send) notifications
+            foreach ($webPush->flush() as $report) {
+                $endpoint = $report->getRequest()->getUri()->__toString();
+
+                if (!$report->isSuccess()) {
+                    // Subscription expired or invalid, remove it
+                    if (in_array($report->getResponse()->getStatusCode(), [404, 410])) {
+                        \App\Models\PushSubscription::where('endpoint', $endpoint)->delete();
+                    }
+                }
+            }
+        }
+
         return response()->json([
             'message' => 'Appointment created successfully',
-            'appointment' => $appointment->load(['client', 'barber', 'services'])
+            'appointment' => $appointment
         ], 201);
     }
 }

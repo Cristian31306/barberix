@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Scissors, CalendarDays, Users, LayoutDashboard, Settings, Package, Store, DollarSign, Archive, ShoppingCart } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 import AgendaView from './AgendaView';
 import ClientsManager from './ClientsManager';
@@ -29,6 +30,30 @@ export default function Dashboard() {
       api.getSystemConfig().then(conf => setConfig(conf)).catch(console.error);
     });
   }, [fetchUser]);
+
+  usePushNotifications(!!user);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === 'PUSH_RECEIVED') {
+        // Play notification sound
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+        oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.5);
+      }
+    };
+    navigator.serviceWorker?.addEventListener('message', handleMessage);
+    return () => navigator.serviceWorker?.removeEventListener('message', handleMessage);
+  }, []);
 
   const handleLogout = async () => {
     await logout();

@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { getSystemConfig, updateSystemConfig } from '../lib/api';
-import { Settings, Save, Loader2, Award, Package, DollarSign, Clock, Plus, Trash2 } from 'lucide-react';
+import { Settings, Save, Loader2, Award, Package, DollarSign, Clock, Plus, Trash2, Link, Copy, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
 
 export default function ConfigPanel({ onConfigUpdate }) {
   const [config, setConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     loadConfig();
@@ -59,6 +62,46 @@ export default function ConfigPanel({ onConfigUpdate }) {
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Ajustes del Sistema</h2>
           <p className="text-sm text-slate-500">Configura las reglas de negocio de tu barbería</p>
+        </div>
+      </div>
+
+      {/* Enlace de Reservas Público */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex items-center gap-3">
+          <Link className="w-5 h-5 text-emerald-600" />
+          <h3 className="font-bold text-lg text-slate-800">Enlace Público para Clientes</h3>
+        </div>
+        <div className="p-5 space-y-4">
+          <p className="text-sm text-slate-500">
+            Comparte este enlace con tus clientes en WhatsApp o redes sociales para que ellos mismos puedan agendar sus citas. El sistema calculará el tiempo necesario según los servicios que elijan.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <div className="flex-1 bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-sm text-slate-700 w-full overflow-hidden text-ellipsis whitespace-nowrap">
+              {window.location.origin}/book/{user?.tenant_id}
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/book/${user?.tenant_id}`);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-medium transition-colors"
+              >
+                {copied ? <CheckCircle2 className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? 'Copiado' : 'Copiar Enlace'}
+              </button>
+              <a 
+                href={`/book/${user?.tenant_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center px-4 py-3 bg-slate-900 text-white hover:bg-slate-800 rounded-xl transition-colors"
+                title="Abrir y probar el enlace"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Check, X, Shield, RefreshCw, Loader2, Store } from 'lucide-react';
+import { Plus, Check, X, Shield, RefreshCw, Loader2, Store, Link, Copy, ExternalLink, CheckCircle2 } from 'lucide-react';
 import api from '../lib/axios';
 
 export default function TenantsManager() {
@@ -17,6 +17,9 @@ export default function TenantsManager() {
   // Subscription renew state
   const [showSubModal, setShowSubModal] = useState(false);
   const [subData, setSubData] = useState({ tenantId: null, subscription_ends_at: '' });
+
+  // Copy link state
+  const [copiedId, setCopiedId] = useState(null);
 
   const fetchTenants = async () => {
     try {
@@ -143,6 +146,35 @@ export default function TenantsManager() {
               <button onClick={() => { setSubData({ tenantId: tenant.id, subscription_ends_at: tenant.subscription_ends_at || '' }); setShowSubModal(true); }} className="text-xs font-medium text-amber-600 hover:text-amber-800 underline">
                 Renovar Suscripción
               </button>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 mb-4 flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1 flex items-center gap-2">
+                <Link className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className="text-xs text-slate-500 truncate font-mono">{window.location.origin}/book/{tenant.id}</span>
+              </div>
+              <div className="flex gap-1 flex-shrink-0">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/book/${tenant.id}`);
+                    setCopiedId(tenant.id);
+                    setTimeout(() => setCopiedId(null), 2000);
+                  }}
+                  className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition-colors"
+                  title="Copiar Enlace"
+                >
+                  {copiedId === tenant.id ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+                <a
+                  href={`/book/${tenant.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded-md transition-colors"
+                  title="Abrir Enlace"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
             </div>
 
             <div className="space-y-3 pt-3 border-t border-slate-100">

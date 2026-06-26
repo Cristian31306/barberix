@@ -12,7 +12,7 @@ use App\Http\Controllers\SystemConfigController;
 use App\Http\Controllers\InventoryItemController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\SuperAdminController;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -57,6 +57,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cash-register/close', [App\Http\Controllers\CashRegisterController::class, 'close']);
     Route::get('/cash-register/history', [App\Http\Controllers\CashRegisterController::class, 'history']);
 
+    Route::get('/vapid-public-key', function () {
+        return response()->json(['key' => env('VAPID_PUBLIC_KEY')]);
+    });
+
     // POS
     Route::post('/pos/checkout', [App\Http\Controllers\PosController::class, 'checkout']);
+
+    // Push Notifications
+    Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store']);
 });

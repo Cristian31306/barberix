@@ -33,7 +33,8 @@ export default function BookingPortal() {
 
   const fetchTenantInfo = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/public/booking-info/${tenantId}`);
+      const baseUrl = import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api';
+      const response = await fetch(`${baseUrl}/public/booking-info/${tenantId}`);
       if (!response.ok) throw new Error('No se pudo cargar la información de la barbería.');
       
       const data = await response.json();
@@ -79,7 +80,8 @@ export default function BookingPortal() {
         service_ids: selectedServices.map(s => s.id)
       };
 
-      const response = await fetch(`http://127.0.0.1:8000/api/public/book/${tenantId}`, {
+      const baseUrl = import.meta.env.PROD ? '/api' : 'http://127.0.0.1:8000/api';
+      const response = await fetch(`${baseUrl}/public/book/${tenantId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
